@@ -1,34 +1,40 @@
 import { browser } from "$app/environment";
-let initialQuestions = [];
+import * as questionApi from "$lib/apis/question-api";
+
+let questionState = $state([]);
 
 const QUESTIONS = "questions";
-if (browser && localStorage.hasOwnProperty(QUESTIONS)) {
-    initialQuestions = JSON.parse(localStorage.getItem(QUESTIONS));
+if (browser ) {
+    questionApi.readQuestionss().then((questions) => {
+        questionState = questions;
+    }
+    );
 }
-let questionState = $state(initialQuestions);
+
 
 const useQuestionState = () => {
   return {
     get questions() {
       return questionState;
     },
-    addQestion: (e) => {
+    addQestion: async (e) => {
         const question = Object.fromEntries(new FormData(e.target));
-        console.log(question)
-        question.id = crypto.randomUUID();
-        question.vote = 0
-        questionState.push(question);
-        localStorage.setItem(QUESTIONS, JSON.stringify(questionState))
+        const newQuestion = await questionApi.createQuestion(
+            question.title,
+            question.text
+        );
+        questionState.push(newQuestion);
         e.target.reset();
         e.preventDefault();
     },
-    deleteQuestion: (question) => {
-        questionState = questionState.filter((q) => q.id !== question.id);
-        localStorage.setItem(QUESTIONS, JSON.stringify(questionState))
+    deleteQuestion: async (question) => {
+        const deletedQuestion = await questionApi.deleteQuestion(question.id);
+        questionState = questionState.filter((q) => q.id !== deletedQuestion.id);
     },
-    upvoteQuestion: (question) => {
-        question.vote += 1
-        localStorage.setItem(QUESTIONS, JSON.stringify(questionState))
+    upvoteQuestion: async (question) => {
+        const upvotedQuestion = await questionApi.upvoteQuestion(question.id);
+        const editedQuestion = questionState.find((q) => q.id === upvotedQuestion.id);
+        editedQuestion.upvotes = upvotedQuestion.upvotes;
     }
   };
 };

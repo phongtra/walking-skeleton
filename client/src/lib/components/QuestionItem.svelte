@@ -8,8 +8,8 @@
 
 <li>
     <h1>{question.title}</h1>
-    <p>{question.description}</p>
+    <p>{question.text}</p>
     <button onclick={() => questionState.deleteQuestion(question)}>Delete</button>
     <button onclick={() => questionState.upvoteQuestion(question)}>Upvote</button>
-    <p>Upvotes: {question.vote}</p>
+    <p>Upvotes: {question.upvotes}</p>
   </li>
