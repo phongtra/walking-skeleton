@@ -1,10 +1,10 @@
 import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
-// import postgres from "postgres";
+import postgres from "postgres";
 
 const app = new Hono();
-// const sql = postgres();
+const sql = postgres();
 
 let courses = []
 
