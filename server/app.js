@@ -1,10 +1,12 @@
 import { Hono } from "@hono/hono";
 import { cors } from "@hono/hono/cors";
 import { logger } from "@hono/hono/logger";
-import postgres from "postgres";
+
+import * as courseController from "./controllers/courseController.js";
+import * as questionController from "./controllers/questionController.js";
 
 const app = new Hono();
-const sql = postgres();
+
 
 let courses = []
 
@@ -13,42 +15,20 @@ app.use("/*", logger());
 
 
 
-app.get('/courses', (c) => c.json({"courses":
-  [
-    {"id": 1, "name": "Web Software Development" },
-    {"id": 2, "name": "Device-Agnostic Design" }
-  ]
-}))
+app.get('/api/courses', courseController.getCourses)
 
-app.get('/courses/:id', c => c.json({"course": {"id": Number(c.req.param('id')), "name": "Course Name" }}))
+app.get('/api/courses/:id', courseController.getCourse)
 
-app.post('/courses', async c => {
-  const body = await c.req.json()
-  return c.json({course: {id: 3, name: body.name}})
-})
+app.post('/api/courses', ...courseController.createCourse)
 
-app.get('/courses/:id/questions', c => c.json(courses))
-app.post('/courses/:id/questions', async c => {
-  const body = await c.req.json()
-  body.id = courses.length + 1
-  body.upvotes = 0
-  courses.push(body)
-  return c.json(body)
-})
+app.delete('/api/courses/:id', courseController.deleteCourse)
 
-app.post('/courses/:id/questions/:qId/upvote',  c => {
-  const questionId =  Number(c.req.param("qId"))
-  const course = courses.find(co => co.id === questionId)
-  course.upvotes++
-  return c.json(course)
-})
+app.get('/api/courses/:id/questions', questionController.getQuestions)
+app.post('/api/courses/:id/questions', ...questionController.createQuestion)
 
-app.delete('/courses/:id/questions/:qId', c => {
-  const questionId =  Number(c.req.param("qId"))
-  const course = courses.find(co => co.id === questionId)
-  courses = courses.filter(co => co.id !== questionId)
-  return c.json(course)
-})
+app.post('/api/courses/:id/questions/:qId/upvote', questionController.updateVote)
+
+app.delete('/api/courses/:id/questions/:qId', questionController.deleteQuestion)
 
 
 
