@@ -1,9 +1,10 @@
 <script>
     import { useQuestionState } from "../states/questionState.svelte.js";
     let questionState = useQuestionState();
+    let { courseId } = $props();
   </script>
 
-<form onsubmit={questionState.addQestion} class="mx-auto w-full max-w-md space-y-4">
+<form onsubmit={(e) => questionState.addQestion(courseId, e)} class="mx-auto w-full max-w-md space-y-4">
     <label class="label" for="title">Question</label>
     <input class="input" id="title" name="title" type="text" placeholder="Enter a new question" />
     <label class="label" for="text">Add question text</label>

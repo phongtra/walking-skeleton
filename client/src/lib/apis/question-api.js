@@ -1,9 +1,9 @@
 import { PUBLIC_API_URL } from "$env/static/public";
 
-const createQuestion = async (title, text) => {
+const createQuestion = async (courseId, title, text) => {
   const data = { title, text };
 
-  const response = await fetch(`${PUBLIC_API_URL}/courses/1/questions`, {
+  const response = await fetch(`${PUBLIC_API_URL}/api/courses/${courseId}/questions`, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -14,20 +14,20 @@ const createQuestion = async (title, text) => {
   return await response.json();
 };
 
-const readQuestionss = async () => {
-  const response = await fetch(`${PUBLIC_API_URL}/courses/1/questions`);
+const readQuestionss = async (courseId) => {
+  const response = await fetch(`${PUBLIC_API_URL}/api/courses/${courseId}/questions`);
   return await response.json();
 };
 
-const upvoteQuestion = async (id) => {
-  const response = await fetch(`${PUBLIC_API_URL}/courses/1/questions/${id}/upvote`, {
+const upvoteQuestion = async (courseId, id) => {
+  const response = await fetch(`${PUBLIC_API_URL}/api/courses/${courseId}/questions/${id}/upvote`, {
     method: "POST",
   });
   return await response.json();
 }
 
-const deleteQuestion = async (id) => {
-  const response = await fetch(`${PUBLIC_API_URL}/courses/1/questions/${id}`, {
+const deleteQuestion = async (courseId, id) => {
+  const response = await fetch(`${PUBLIC_API_URL}/api/courses/${courseId}/questions/${id}`, {
     method: "DELETE",
   });
   return await response.json();
